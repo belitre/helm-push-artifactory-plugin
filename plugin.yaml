@@ -1,0 +1,10 @@
+name: "push-artifactory"
+version: "0.1.0"
+usage: "Please see https://github.com/belitre/helm-push-artifactory-plugin for usage"
+description: "Push helm charts to artifactory"
+ignoreFlags: false
+useTunnel: false
+command: "$HELM_PLUGIN_DIR/bin/helm-push-artifactory"
+hooks:
+  install: "cd $HELM_PLUGIN_DIR; scripts/install_plugin.sh"
+  update: "cd $HELM_PLUGIN_DIR; scripts/install_plugin.sh"
