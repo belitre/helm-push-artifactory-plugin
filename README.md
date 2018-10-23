@@ -16,6 +16,13 @@ https://github.com/belitre/helm-push-artifactory-plugin/releases/download/v0.1.0
 Installed plugin: push-artifactory
 ```
 
+## Uninstall
+
+```
+helm plugin remove push-artifactory
+Removed plugin: push-artifactory
+```
+
 ## Usage
 __This plugin doesn't use repositories added through Helm CLI, in Artifactory those are virtual repositories. To push a chart we need to use a local repository URL__
 
