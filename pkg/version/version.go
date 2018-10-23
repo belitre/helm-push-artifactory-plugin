@@ -6,7 +6,7 @@ import (
 
 // Version should be updated each time there is a new release
 var (
-	Version   = "v0.2"
+	Version   = "Canary"
 	GitCommit = ""
 )
 

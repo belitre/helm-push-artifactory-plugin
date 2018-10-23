@@ -15,12 +15,15 @@
 
 [[projects]]
   name = "github.com/chartmuseum/helm-push"
-  packages = [
-    "pkg/chartmuseum",
-    "pkg/helm"
-  ]
+  packages = ["pkg/helm"]
   revision = "fb6b3955e20103b528d5ac0a596f74a10c09447c"
   version = "v0.7.1"
+
+[[projects]]
+  name = "github.com/davecgh/go-spew"
+  packages = ["spew"]
+  revision = "8991bc29aa16c548c550c7ff78260e27b9ab7c73"
+  version = "v1.1.1"
 
 [[projects]]
   name = "github.com/ghodss/yaml"
@@ -60,6 +63,24 @@
   version = "v1.0"
 
 [[projects]]
+  name = "github.com/jfrog/jfrog-cli-go"
+  packages = [
+    "jfrog-client/utils",
+    "jfrog-client/utils/errorutils",
+    "jfrog-client/utils/io/fileutils",
+    "jfrog-client/utils/io/fileutils/checksum",
+    "jfrog-client/utils/io/fileutils/checksum/utils"
+  ]
+  revision = "ba45bd3759f592470cb161894dcc77059ced967f"
+  version = "1.20.2"
+
+[[projects]]
+  name = "github.com/pmezard/go-difflib"
+  packages = ["difflib"]
+  revision = "792786c7400a136282c1664665ae0a8db921c6c2"
+  version = "v1.0.0"
+
+[[projects]]
   name = "github.com/spf13/cobra"
   packages = ["."]
   revision = "ef82de70bb3f60c65fb8eebacbb2d122ef517385"
@@ -70,6 +91,12 @@
   packages = ["."]
   revision = "298182f68c66c05229eb03ac171abe6e309ee79a"
   version = "v1.0.3"
+
+[[projects]]
+  name = "github.com/stretchr/testify"
+  packages = ["assert"]
+  revision = "f35b8ab0b5a2cef36673838d662e249dd9c94686"
+  version = "v1.2.2"
 
 [[projects]]
   branch = "master"
@@ -128,6 +155,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "79e1aacf341f7ea732718305f7b814d904c4af81381a54f93d0d7cd0f0abb0b2"
+  inputs-digest = "de1f7fc8a219225ea1d0f4295ba8abcad1acee76a1d7424b06b95a1d5f6234a4"
   solver-name = "gps-cdcl"
   solver-version = 1

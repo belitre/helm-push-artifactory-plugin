@@ -11,9 +11,9 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/chartmuseum/helm-push/pkg/helm"
 	"github.com/belitre/helm-push-artifactory-plugin/pkg/artifactory"
 	"github.com/belitre/helm-push-artifactory-plugin/pkg/version"
+	"github.com/chartmuseum/helm-push/pkg/helm"
 	"github.com/spf13/cobra"
 )
 
