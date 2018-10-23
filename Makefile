@@ -9,7 +9,7 @@ TESTFLAGS :=
 HAS_DEP := $(shell command -v dep;)
 HAS_GOX := $(shell command -v gox;)
 
-TARGETS ?= darwin/amd64 linux/amd64 windows/amd64
+TARGETS ?= darwin/amd64 linux/amd64
 BIN_NAME := helm-push-artifactory
 DIST_DIRS = find * -type d -maxdepth 0 -exec
 
@@ -58,7 +58,7 @@ dist:
 .PHONY: build-cross
 build-cross: LDFLAGS += -extldflags "-static"
 build-cross: 
-	CGO_ENABLED=0 gox -parallel=3 -output="_dist/{{.OS}}-{{.Arch}}/${BIN_NAME}/" -osarch='$(TARGETS)' -ldflags '$(LDFLAGS)' github.com/belitre/helm-push-artifactory-plugin/cmd/push
+	CGO_ENABLED=0 gox -parallel=2 -output="_dist/{{.OS}}-{{.Arch}}/${BIN_NAME}" -osarch='$(TARGETS)' -ldflags '$(LDFLAGS)' github.com/belitre/helm-push-artifactory-plugin/cmd/push
 
 .PHONY: clean
 clean:

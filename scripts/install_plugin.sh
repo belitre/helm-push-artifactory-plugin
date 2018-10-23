@@ -11,13 +11,18 @@ version="$(cat plugin.yaml | grep "version" | cut -d '"' -f 2)"
 echo "Downloading and installing helm-push-artifactory v${version} ..."
 
 url=""
+osname=""
+
 if [ "$(uname)" = "Darwin" ]; then
-    url="https://github.com/belitre/helm-push-artifactory-plugin/releases/download/v${version}/helm-push-artifactory-v${version}-darwin-amd64.tar.gz"
+    osname="darwin-amd64"
 elif [ "$(uname)" = "Linux" ] ; then
-    url="https://github.com/chartmuseum/helm-push/releases/download/v${version}/helm-push-artifactory-v${version}-linux-amd64.tar.gz"
+    osname="linux-amd64"
 else
-    url="https://github.com/chartmuseum/helm-push/releases/download/v${version}/helm-push-artifactory-v${version}-windows-amd64.tar.gz"
+    echo "Windows not supported..."
+    exit 0
 fi
+
+url="https://github.com/belitre/helm-push-artifactory-plugin/releases/download/v${version}/helm-push-artifactory-v${version}-${osname}.tar.gz"
 
 echo $url
 
@@ -31,6 +36,5 @@ else
     wget -q "${url}" -O "releases/v${version}.tar.gz"
 fi
 tar xzf "releases/v${version}.tar.gz" -C "releases/v${version}"
-mv "releases/v${version}/helm-push-artifactory" "bin/helm-push-artifactory" || \
-    mv "releases/v${version}/helm-push-artifactory.exe" "bin/helm-push-artifactory"
+mv "releases/v${version}/${osname}/helm-push-artifactory" "bin/helm-push-artifactory"
 
