@@ -46,7 +46,7 @@ endif
 	@dep ensure -v -vendor-only
 
 .PHONY: dist
-dist: clean 
+dist: clean build-cross
 dist:
 	( \
 		cd _dist && \
