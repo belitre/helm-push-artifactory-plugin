@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"net/url"
 	"os"
+	"regexp"
 	"strconv"
 	"strings"
 
@@ -44,6 +45,7 @@ Examples:
   $ helm push-artifactory mychart-0.1.0.tgz https://artifactory/repo       # push mychart-0.1.0.tgz from "helm package"
   $ helm push-artifactory . https://artifactory/repo                       # package and push chart directory
   $ helm push-artifactory . --version="7c4d121" https://artifactory/repo   # override version in Chart.yaml
+  $ helm push-artifactory mychart-0.1.0.tgz my-helm-repo                   # push mychart-0.1.0.tgz to a "my-helm-repo" repository
 `
 )
 
@@ -119,19 +121,49 @@ func (p *pushCmd) setFieldsFromEnv() {
 }
 
 func (p *pushCmd) push() error {
-	chart, err := helm.GetChartByName(p.chartName)
+	var repo *helm.Repo
+	var err error
+
+	// If the argument looks like a URL, just create a temp repo object
+	// instead of looking for the entry in the local repository list
+	if regexp.MustCompile(`^https?://`).MatchString(p.repository) {
+		// Check valid URL
+		_, err = url.ParseRequestURI(p.repository)
+	} else {
+		repo, err = helm.GetRepoByName(p.repository)
+	}
+
 	if err != nil {
 		return err
 	}
 
-	// Check valid URL
-	if _, err = url.ParseRequestURI(p.repository); err != nil {
+	chart, err := helm.GetChartByName(p.chartName)
+	if err != nil {
 		return err
 	}
 
 	// version override
 	if p.chartVersion != "" {
 		chart.SetVersion(p.chartVersion)
+	}
+
+	if repo != nil {
+		p.repository = repo.URL
+		if p.username == "" {
+			p.username = repo.Username
+		}
+		if p.password == "" {
+			p.password = repo.Password
+		}
+		if p.caFile == "" {
+			p.caFile = repo.CAFile
+		}
+		if p.certFile == "" {
+			p.certFile = repo.CertFile
+		}
+		if p.keyFile == "" {
+			p.keyFile = repo.KeyFile
+		}
 	}
 
 	client, err := artifactory.NewClient(
