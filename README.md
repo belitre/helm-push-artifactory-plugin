@@ -31,16 +31,16 @@ __This plugin works with local repositories__, you can add them through the Helm
 
 Example:
 
-    * We can add our local repository with helm CLI:
+* We can add our local repository with helm CLI:
 
-    ```console
+    ```bash
     $ helm repo add --username myuser --password mypass my-local-repo https://artifactoryhost/my-local-repo
     "my-local-repo" has been added to your repositories
     ```
 
-    * We can use this repository later to push charts:
+* We can use this repository later to push charts:
 
-    ```console
+    ```bash
     $ helm push-artifactory mychart-0.3.2.tgz my-local-repo 
     Pushing mychart-0.3.2.tgz to https://artifactoryhost/my-local-repo/mychart/mychart-0.3.2.tgz...
     Done.
@@ -48,16 +48,16 @@ Example:
     Reindex of helm repo my-local-repo was scheduled to run.
     ```
 
-    * __We can't get the helm chart from a local repo:__
+* __We can't get the helm chart from a local repo:__
 
-    ```console
+    ```bash
     $ helm fetch my-local-repo/mychart
     Error: Get local://mychart/mychart-0.3.2.tgz: unsupported protocol scheme "local"
     ```
 
-    * We can add the virtual repo and get the chart:
+* We can add the virtual repo and get the chart:
 
-    ```console
+    ```bash
     $ helm repo add --username myuser --password mypass my-virtual-repo https://artifactoryhost/my-virtual-repo
     "my-virtual-repo" has been added to your repositories
     $ helm repo update
@@ -75,28 +75,28 @@ Example:
 
 Example using URL:
 
-```console
+```bash
 $ helm push-artifactory /my/chart/folder https://my-artifactory/my-local-repo --username username --password password
 ```
 
 Example using helm repo added through CLI:
-```console
+```bash
 $ helm push-artifactory /my/chart/folder my-local-repo
 ```
 
 For all available plugin options, please run:
-```console
+```bash
 $ helm push-artifactory --help
 ```
 
 ### Pushing a directory
 Point to a directory containing a valid `Chart.yaml` and the chart will be packaged and uploaded:
-```console
+```bash
 $ cat mychart/Chart.yaml
 name: mychart
 version: 0.3.2
 ```
-```console
+```bash
 $ helm push-artifactory mychart/ https://my-artifactory/my-local-repo
 Pushing mychart-0.3.2.tgz to https://my-artifactory/my-local-repo/mychart/mychart-0.3.2.tgz...
 Done.
@@ -108,7 +108,7 @@ Reindex of helm repo my-local-repo was scheduled to run.
 The `--version` flag can be provided, which will push the package with a custom version.
 
 Here is an example using the last git commit id as the version:
-```console
+```bash
 $ helm push-artifactory mychart/ --version="$(git log -1 --pretty=format:%h)" https://my-artifactory/my-local-repo
 Pushing mychart-5abbbf28.tgz to https://my-artifactory/my-local-repo/mychart/mychart-5abbbf28.tgz...
 Done.
@@ -118,7 +118,7 @@ Reindex of helm repo my-local-repo was scheduled to run.
 
 ### Push .tgz package
 This workflow does not require the use of `helm package`, but pushing .tgz is still supported:
-```console
+```bash
 $ helm push-artifactory mychart-0.3.2.tgz https://my-artifactory/my-local-repo
 Pushing mychart-0.3.2.tgz to https://my-artifactory/my-local-repo/mychart/mychart-0.3.2.tgz...
 Done.
@@ -128,7 +128,7 @@ Reindex of helm repo my-local-repo was scheduled to run.
 
 ### Push with path
 You can set a path to push your chart in your Artifactory local repository:
-```console
+```bash
 $ helm push-artifactory mychart/ https://my-artifactory/my-local-repo --path organization
 Pushing mychart-0.3.2.tgz to https://my-artifactory/my-local-repo/organization/mychart/mychart-0.3.2.tgz...
 Done.
@@ -138,7 +138,7 @@ Reindex of helm repo my-local-repo was scheduled to run.
 
 ### Skip repository reindex
 You can skip triggering the repository reindex:
-```console
+```bash
 $ helm push-artifactory mychart/ https://my-artifactory/my-local-repo --skip-reindex
 Pushing mychart-0.3.2.tgz to https://my-artifactory/my-local-repo/mychart/mychart-0.3.2.tgz...
 Done.
@@ -149,14 +149,14 @@ Done.
 __The plugin will not use the auth info located in `~/.helm/repository/repositories.yaml` in order to authenticate.__
 
 You can provide username and password through commmand line with `--username username --password password` or use the following environment variables for basic auth on push operations:
-```console
+```bash
 $ export HELM_REPO_USERNAME="myuser"
 $ export HELM_REPO_PASSWORD="mypass"
 ```
 
 ### Access Token
 You can provide an access token through command line with `--access-token my-token` or use the following env var:
-```console
+```bash
 $ export HELM_REPO_ACCESS_TOKEN="<token>"
 ```
 
@@ -169,7 +169,7 @@ If a username is supplied with an access token, the plugin will use basic authen
 
 ### Api Key
 You can provide an api key through command line with `--api-key my-key` or use the following env var:
-```console
+```bash
 $ export HELM_REPO_API_KEY="<api-key>"
 ```
 
