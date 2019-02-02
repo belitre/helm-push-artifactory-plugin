@@ -11,8 +11,8 @@ Based on the version in `plugin.yaml`, release binary will be downloaded from Gi
 
 ```
 $ helm plugin install https://github.com/belitre/helm-push-artifactory-plugin
-Downloading and installing helm-push-artifactory v0.2.0 ...
-https://github.com/belitre/helm-push-artifactory-plugin/releases/download/v0.2.0/helm-push-artifactory_v0.2.0_darwin_amd64.tar.gz
+Downloading and installing helm-push-artifactory v0.3.0 ...
+https://github.com/belitre/helm-push-artifactory-plugin/releases/download/v0.3.0/helm-push-artifactory_v0.3.0_darwin_amd64.tar.gz
 Installed plugin: push-artifactory
 ```
 
@@ -105,7 +105,7 @@ Reindex of helm repo my-local-repo was scheduled to run.
 ```
 
 ### Pushing with a custom version
-The `--version` flag can be provided, which will push the package with a custom version.
+The `--version` or `-v` flag can be provided, which will push the package with a custom version.
 
 Here is an example using the last git commit id as the version:
 ```bash
@@ -114,6 +114,41 @@ Pushing mychart-5abbbf28.tgz to https://my-artifactory/my-local-repo/mychart/myc
 Done.
 Reindex helm repository my-local-repo...
 Reindex of helm repo my-local-repo was scheduled to run.
+```
+
+### Pushing overriding values
+The `--set` or `-s` flag can be provided, which will push the package overriding values in the values.yaml file.
+
+Here is an example using a custom version and default image tag:
+```bash
+$ helm push-artifactory mychart/ -v="0.5.1" -s image.tag="0.5.1" https://my-artifactory/my-local-repo
+Pushing mychart-0.5.1.tgz to https://my-artifactory/my-local-repo/mychart/mychart-0.5.1.tgz...
+Done.
+Reindex helm repository my-local-repo...
+Reindex of helm repo my-local-repo was scheduled to run.
+```
+
+If we check the values.yaml of the chart we'll find:
+```
+image:
+  tag: 0.5.1
+```
+
+We can override multiple values:
+```bash
+$ helm push-artifactory mychart/ -v="0.5.1" -s image.tag="0.5.1" -s service.name="my-custom-name" https://my-artifactory/my-local-repo
+Pushing mychart-0.5.1.tgz to https://my-artifactory/my-local-repo/mychart/mychart-0.5.1.tgz...
+Done.
+Reindex helm repository my-local-repo...
+Reindex of helm repo my-local-repo was scheduled to run.
+```
+
+This will set in values.yaml:
+```
+image:
+  tag: 0.5.1
+service:
+  name: my-custom-name
 ```
 
 ### Push .tgz package
