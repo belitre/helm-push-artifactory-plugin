@@ -73,11 +73,11 @@ covhtml: test
 	@go tool cover -html=.cover/cover.out
 
 .PHONY: install
-install: build
+install: remove build
 	HELM_PUSH_PLUGIN_NO_INSTALL_HOOK=1 helm plugin install $(shell pwd)
 
 .PHONY: remove
 remove:
-	helm plugin remove $(PLUGIN_NAME)
+	helm plugin remove $(PLUGIN_NAME) || true
 
 include versioning.mk
