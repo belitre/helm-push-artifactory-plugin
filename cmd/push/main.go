@@ -13,8 +13,9 @@ import (
 	"strings"
 
 	"github.com/belitre/helm-push-artifactory-plugin/pkg/artifactory"
+	"github.com/belitre/helm-push-artifactory-plugin/pkg/helm"
 	"github.com/belitre/helm-push-artifactory-plugin/pkg/version"
-	"github.com/chartmuseum/helm-push/pkg/helm"
+	helmpush "github.com/chartmuseum/helm-push/pkg/helm"
 	"github.com/spf13/cobra"
 )
 
@@ -33,6 +34,7 @@ type (
 		keyFile            string
 		insecureSkipVerify bool
 		skipReindex        bool
+		overrides          []string
 	}
 )
 
@@ -73,6 +75,7 @@ func newPushCmd(args []string) *cobra.Command {
 	}
 	f := cmd.Flags()
 	f.StringVarP(&p.chartVersion, "version", "v", "", "Override chart version pre-push")
+	f.StringArrayVarP(&p.overrides, "set", "s", []string{}, "<key>=<value> pairs, overrides values in chart values.yaml (example: -s image.tag=\"0.5.2\")")
 	f.StringVarP(&p.path, "path", "", "", "Path to save the chart in the local repository (https://artifactory/repo/path/chart.version.tgz) [$HELM_REPO_PATH]")
 	f.StringVarP(&p.username, "username", "u", "", "Override HTTP basic auth username [$HELM_REPO_USERNAME]")
 	f.StringVarP(&p.password, "password", "p", "", "Override HTTP basic auth password [$HELM_REPO_PASSWORD]")
@@ -121,7 +124,7 @@ func (p *pushCmd) setFieldsFromEnv() {
 }
 
 func (p *pushCmd) push() error {
-	var repo *helm.Repo
+	var repo *helmpush.Repo
 	var err error
 
 	// If the argument looks like a URL, just create a temp repo object
@@ -130,7 +133,7 @@ func (p *pushCmd) push() error {
 		// Check valid URL
 		_, err = url.ParseRequestURI(p.repository)
 	} else {
-		repo, err = helm.GetRepoByName(p.repository)
+		repo, err = helmpush.GetRepoByName(p.repository)
 	}
 
 	if err != nil {
@@ -145,6 +148,10 @@ func (p *pushCmd) push() error {
 	// version override
 	if p.chartVersion != "" {
 		chart.SetVersion(p.chartVersion)
+	}
+
+	if len(p.overrides) > 0 {
+		chart.OverrideValues(p.overrides)
 	}
 
 	if repo != nil {
