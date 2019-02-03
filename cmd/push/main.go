@@ -15,7 +15,7 @@ import (
 	"github.com/belitre/helm-push-artifactory-plugin/pkg/artifactory"
 	"github.com/belitre/helm-push-artifactory-plugin/pkg/helm"
 	"github.com/belitre/helm-push-artifactory-plugin/pkg/version"
-	helmPush "github.com/chartmuseum/helm-push/pkg/helm"
+	helmpush "github.com/chartmuseum/helm-push/pkg/helm"
 	"github.com/spf13/cobra"
 )
 
@@ -124,7 +124,7 @@ func (p *pushCmd) setFieldsFromEnv() {
 }
 
 func (p *pushCmd) push() error {
-	var repo *helmPush.Repo
+	var repo *helmpush.Repo
 	var err error
 
 	// If the argument looks like a URL, just create a temp repo object
@@ -133,7 +133,7 @@ func (p *pushCmd) push() error {
 		// Check valid URL
 		_, err = url.ParseRequestURI(p.repository)
 	} else {
-		repo, err = helmPush.GetRepoByName(p.repository)
+		repo, err = helmpush.GetRepoByName(p.repository)
 	}
 
 	if err != nil {
