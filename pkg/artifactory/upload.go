@@ -10,7 +10,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/jfrog/jfrog-cli-go/jfrog-client/utils/io/fileutils"
+	"github.com/jfrog/jfrog-client-go/utils/io/fileutils"
 )
 
 // ReindexArtifactoryRepo calculates chart index of the local repository
