@@ -6,6 +6,8 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 var (
@@ -43,29 +45,22 @@ func TestUploadChartPackage(t *testing.T) {
 		Password("pass"),
 		Path("/my/path"),
 	)
-	if err != nil {
-		t.Fatalf("[happy path] expect creating a client instance but met error: %s", err)
-	}
+	assert.NoError(t, err)
+
 	resp, err := cmClient.UploadChartPackage(chartName, testTarballPath)
-	if err != nil {
-		t.Error("error uploading chart package", err)
-	}
-	if resp.StatusCode != 201 {
-		t.Errorf("expecting 201 instead got %d", resp.StatusCode)
-	}
+	assert.NoError(t, err)
+
+	assert.Equal(t, 201, resp.StatusCode)
+	resp.Body.Close()
 
 	// Bad package path
-	resp, err = cmClient.UploadChartPackage(chartName, "/non/existant/path/mychart-0.1.0.tgz")
-	if err == nil {
-		t.Error("expecting error with bad package path, instead got nil")
-	}
+	_, err = cmClient.UploadChartPackage(chartName, "/non/existent/path/mychart-0.1.0.tgz")
+	assert.Error(t, err)
 
 	// Bad URL
 	cmClient, _ = NewClient(URL("jaswehfgew"))
 	_, err = cmClient.UploadChartPackage(chartName, testTarballPath)
-	if err == nil {
-		t.Error("[bad URL] expecting error with bad package path, instead got nil")
-	}
+	assert.Error(t, err)
 
 	// Bad context path
 	cmClient, err = NewClient(
@@ -75,17 +70,12 @@ func TestUploadChartPackage(t *testing.T) {
 		Path("/my/crappy/context/path"),
 		Timeout(5),
 	)
-	if err != nil {
-		t.Fatalf("[bad path] expect creating a client instance but met error: %s", err)
-	}
+	assert.NoError(t, err)
 
 	resp, err = cmClient.UploadChartPackage(chartName, testTarballPath)
-	if err != nil {
-		t.Error("unexpected error with bad context path", err)
-	}
-	if resp.StatusCode != 404 {
-		t.Errorf("expecting 404 instead got %d", resp.StatusCode)
-	}
+	assert.NoError(t, err)
+	assert.Equal(t, 404, resp.StatusCode)
+	resp.Body.Close()
 
 	// Unauthorized, invalid user/pass combo (basic auth)
 	cmClient, err = NewClient(
@@ -94,32 +84,24 @@ func TestUploadChartPackage(t *testing.T) {
 		Password("badpass"),
 		Path("/my/path"),
 	)
-	if err != nil {
-		t.Fatalf("[unauthorized: invalid user/pass] expect creating a client instance but met error: %s", err)
-	}
+	assert.NoError(t, err)
+
 	resp, err = cmClient.UploadChartPackage(chartName, testTarballPath)
-	if err != nil {
-		t.Error("unexpected error with invalid user/pass combo (basic auth)", err)
-	}
-	if resp.StatusCode != 401 {
-		t.Errorf("expecting 401 instead got %d", resp.StatusCode)
-	}
+	assert.NoError(t, err)
+	assert.Equal(t, 401, resp.StatusCode)
+	resp.Body.Close()
 
 	// Unauthorized, missing user/pass combo (basic auth)
 	cmClient, err = NewClient(
 		URL(url),
 		Path("/my/path"),
 	)
-	if err != nil {
-		t.Fatalf("[unauthorized: missing user/pass] expect creating a client instance but met error: %s", err)
-	}
+	assert.NoError(t, err)
+
 	resp, err = cmClient.UploadChartPackage(chartName, testTarballPath)
-	if err != nil {
-		t.Error("unexpected error with missing user/pass combo (basic auth)", err)
-	}
-	if resp.StatusCode != 401 {
-		t.Errorf("expecting 401 instead got %d", resp.StatusCode)
-	}
+	assert.NoError(t, err)
+	assert.Equal(t, 401, resp.StatusCode)
+	resp.Body.Close()
 }
 
 /*
@@ -286,32 +268,24 @@ func TestReindexArtifactoryRepo(t *testing.T) {
 		AccessToken("token"),
 		Path("/my/path"),
 	)
-	if err != nil {
-		t.Fatalf("[basic auth token] expect creating a client instance but met error: %s", err)
-	}
+	assert.NoError(t, err)
+
 	resp, err := cmClient.ReindexArtifactoryRepo()
-	if err != nil {
-		t.Error("error reindexing repo", err)
-	}
-	if resp.StatusCode != 200 {
-		t.Errorf("expecting 200 instead got %d", resp.StatusCode)
-	}
+	assert.NoError(t, err)
+	assert.Equal(t, 200, resp.StatusCode)
+	resp.Body.Close()
 
 	// auth header token
 	cmClient, err = NewClient(
 		URL(url),
 		AccessToken("token"),
 	)
-	if err != nil {
-		t.Fatalf("[auth header token] expect creating a client instance but met error: %s", err)
-	}
+	assert.NoError(t, err)
+
 	resp, err = cmClient.ReindexArtifactoryRepo()
-	if err != nil {
-		t.Error("error reindexing repo", err)
-	}
-	if resp.StatusCode != 200 {
-		t.Errorf("expecting 200 instead got %d", resp.StatusCode)
-	}
+	assert.NoError(t, err)
+	assert.Equal(t, 200, resp.StatusCode)
+	resp.Body.Close()
 
 	// basic auth apiKey
 	cmClient, err = NewClient(
@@ -319,30 +293,22 @@ func TestReindexArtifactoryRepo(t *testing.T) {
 		Username("user"),
 		ApiKey("apiKey"),
 	)
-	if err != nil {
-		t.Fatalf("[basic auth apiKey] expect creating a client instance but met error: %s", err)
-	}
+	assert.NoError(t, err)
+
 	resp, err = cmClient.ReindexArtifactoryRepo()
-	if err != nil {
-		t.Error("error reindexing repo", err)
-	}
-	if resp.StatusCode != 200 {
-		t.Errorf("expecting 200 instead got %d", resp.StatusCode)
-	}
+	assert.NoError(t, err)
+	assert.Equal(t, 200, resp.StatusCode)
+	resp.Body.Close()
 
 	// auth header apiKey
 	cmClient, err = NewClient(
 		URL(url),
 		ApiKey("apiKey"),
 	)
-	if err != nil {
-		t.Fatalf("[auth header apiKey] expect creating a client instance but met error: %s", err)
-	}
+	assert.NoError(t, err)
+
 	resp, err = cmClient.ReindexArtifactoryRepo()
-	if err != nil {
-		t.Error("error reindexing repo", err)
-	}
-	if resp.StatusCode != 200 {
-		t.Errorf("expecting 200 instead got %d", resp.StatusCode)
-	}
+	assert.NoError(t, err)
+	assert.Equal(t, 200, resp.StatusCode)
+	resp.Body.Close()
 }

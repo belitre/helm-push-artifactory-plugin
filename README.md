@@ -1,5 +1,7 @@
 # Helm push artifactory plugin
 
+__WARNING: THIS VERSION IS FOR HELM 3, FOR HELM 2 PLEASE USE VERSION [v0.4.0](https://github.com/belitre/helm-push-artifactory-plugin/releases/tag/v0.4.0)__
+
 A Helm plugin to push helm charts to artifactory:
  
  * A version for artifactory of helm-push: https://github.com/chartmuseum/helm-push
@@ -8,24 +10,16 @@ A Helm plugin to push helm charts to artifactory:
 
 ## Install
 
-Based on the version in `plugin.yaml`, release binary will be downloaded from GitHub:
+To install the version for Helm 3 you need to specify the version when installing using helm cli:
 
 ```
-$ helm plugin install https://github.com/belitre/helm-push-artifactory-plugin
-Downloading and installing helm-push-artifactory v0.4.0 ...
-https://github.com/belitre/helm-push-artifactory-plugin/releases/download/v0.4.0/helm-push-artifactory_v0.4.0_darwin_amd64.tar.gz
+$ helm plugin install https://github.com/belitre/helm-push-artifactory-plugin --version v1.0.0
+Downloading and installing helm-push-artifactory v1.0.0 ...
+https://github.com/belitre/helm-push-artifactory-plugin/releases/download/v1.0.0/helm-push-artifactory_v1.0.0_darwin_amd64.tar.gz
 Installed plugin: push-artifactory
 ```
 
-You can specify an specific version:
-```
-$ helm plugin install https://github.com/belitre/helm-push-artifactory-plugin --version v0.3.0
-Downloading and installing helm-push-artifactory v0.3.0 ...
-https://github.com/belitre/helm-push-artifactory-plugin/releases/download/v0.3.0/helm-push-artifactory_v0.3.0_darwin_amd64.tar.gz
-Installed plugin: push-artifactory
-```
-
-You can also download on one of the compressed files from [here](https://github.com/belitre/helm-push-artifactory-plugin/releases) and just extract it in your `$HELM_HOME/plugins/`
+You can also download on one of the compressed files from [here](https://github.com/belitre/helm-push-artifactory-plugin/releases/tag/v1.0.0) and just extract it in your `$HELM_HOME/plugins/`
 
 __Important for windows users: I really don't know how to make the `helm plugin install` command work on Windows :D so please just download the zip and extract it on your `$HELM_HOME/plugins/ folder :)__
 
@@ -85,6 +79,12 @@ Example:
     ``` 
 
 ## Usage
+
+You can override the repositories file using the environment variable `HELM_REPOSITORY_CONFIG`, example:
+
+```
+export HELM_REPOSITORY_CONFIG=/home/myuser/my_repositories.yaml
+```
 
 Example using URL:
 

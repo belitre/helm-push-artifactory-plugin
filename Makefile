@@ -30,7 +30,7 @@ vet:
 
 fmt:
 	@set -e; \
-	GO_FMT=$$(git ls-files *.go | grep -v 'vendor/' | xargs gofmt -d); \
+	GO_FMT=$$(git ls-files *.go | grep -v 'vendor/' | xargs gofmt -d -s); \
 	if [ -n "$${GO_FMT}" ] ; then \
 		echo "Please run go fmt"; \
 		echo "$$GO_FMT"; \

@@ -5,18 +5,18 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"os"
+	"path"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
 
-	"k8s.io/helm/pkg/getter"
-	helm_env "k8s.io/helm/pkg/helm/environment"
-	"k8s.io/helm/pkg/helm/helmpath"
-	"k8s.io/helm/pkg/repo"
+	"helm.sh/helm/pkg/cli"
+	"helm.sh/helm/pkg/getter"
+	"helm.sh/helm/pkg/repo"
 )
 
 var (
-	settings           helm_env.EnvSettings
+	settings           = &cli.EnvSettings{}
 	testTarballPath    = "../../testdata/charts/mychart/mychart-0.1.0.tgz"
 	testCertPath       = "../../testdata/tls/test_cert.crt"
 	testKeyPath        = "../../testdata/tls/test_key.key"
@@ -50,8 +50,9 @@ func TestPushCmd(t *testing.T) {
 	}
 	defer os.RemoveAll(tmp)
 
-	home := helmpath.Home(tmp)
-	f := repo.NewRepoFile()
+	filepath := path.Join(tmp, "repositories.yaml")
+
+	f := repo.NewFile()
 
 	entry := repo.Entry{}
 	entry.Name = "helm-push-test"
@@ -63,88 +64,74 @@ func TestPushCmd(t *testing.T) {
 	}
 
 	f.Update(&entry)
-	os.MkdirAll(home.Repository(), 0777)
-	f.WriteFile(home.RepositoryFile(), 0644)
+	err = f.WriteFile(filepath, 0644)
+	assert.NoError(t, err)
 
-	os.Setenv("HELM_HOME", home.String())
+	os.Setenv("HELM_REPOSITORY_CONFIG", filepath)
 	os.Setenv("HELM_REPO_USERNAME", "myuser")
 	os.Setenv("HELM_REPO_PASSWORD", "mypass")
 
 	// Not enough args
 	args := []string{}
-	cmd := newPushCmd(args)
+	cmd, err := newPushCmd(args)
+	assert.NoError(t, err)
 	err = cmd.RunE(cmd, args)
-	if err == nil {
-		t.Error("expecting error with missing args, instead got nil")
-	}
+	assert.Error(t, err)
 
 	// Bad chart path
-	args = []string{"/this/this/not/a/chart", "helm-push-test"}
-	cmd = newPushCmd(args)
+	args = []string{"/this/not/a/chart", "helm-push-test"}
+	cmd, err = newPushCmd(args)
+	assert.NoError(t, err)
 	err = cmd.RunE(cmd, args)
-	if err == nil {
-		t.Error("expecting error with bad chart path, instead got nil")
-	}
+	assert.Error(t, err)
 
 	// Bad repo name
 	args = []string{testTarballPath, "wkerjbnkwejrnkj"}
-	cmd = newPushCmd(args)
+	cmd, err = newPushCmd(args)
+	assert.NoError(t, err)
 	err = cmd.RunE(cmd, args)
-	if err == nil {
-		t.Error("expecting error with bad repo name, instead got nil")
-	}
+	assert.Error(t, err)
 
 	// Happy path
 	args = []string{testTarballPath, "helm-push-test"}
-	cmd = newPushCmd(args)
+	cmd, err = newPushCmd(args)
+	assert.NoError(t, err)
 	err = cmd.RunE(cmd, args)
-	if err != nil {
-		t.Error("unexpecting error uploading tarball", err)
-	}
+	assert.NoError(t, err)
 
 	// Happy path by repo URL
 	args = []string{testTarballPath, ts.URL}
-	cmd = newPushCmd(args)
+	cmd, err = newPushCmd(args)
+	assert.NoError(t, err)
 	err = cmd.RunE(cmd, args)
-	if err != nil {
-		t.Error("unexpecting error uploading tarball", err)
-	}
+	assert.NoError(t, err)
 
 	// Trigger reindex error
 	postStatusCode = 403
 	body = "{\"errors\": [{\"message\": \"Error\", \"status\": 403}]}"
 	args = []string{testTarballPath, ts.URL}
-	cmd = newPushCmd(args)
+	cmd, err = newPushCmd(args)
+	assert.NoError(t, err)
 	err = cmd.RunE(cmd, args)
-	if err == nil {
-		t.Error("expecting error with 403, instead got nil")
-	} else {
-		assert.Error(t, err, "403: Error")
-	}
+	assert.Error(t, err, "403: Error")
 
 	// Trigger 409
 	putStatusCode = 409
 	body = "{\"errors\": [{\"message\": \"Error\", \"status\": 409}]}"
 	args = []string{testTarballPath, ts.URL}
-	cmd = newPushCmd(args)
+	cmd, err = newPushCmd(args)
+	assert.NoError(t, err)
 	err = cmd.RunE(cmd, args)
-	if err == nil {
-		t.Error("expecting error with 409, instead got nil")
-	} else {
-		assert.Error(t, err, "409: Error")
-	}
+	assert.Error(t, err, "409: Error")
 
 	// Unable to parse JSON response body
 	putStatusCode = 500
 	body = "qkewjrnvqejrnbvjern"
 	args = []string{testTarballPath, ts.URL}
-	cmd = newPushCmd(args)
+	cmd, err = newPushCmd(args)
+	assert.NoError(t, err)
 	err = cmd.RunE(cmd, args)
-	if err == nil {
-		t.Error("expecting error with bad response body, instead got nil")
-	} else {
-		assert.Error(t, err, "500: could not properly parse response JSON: qkewjrnvqejrnbvjern")
-	}
+	assert.Error(t, err, "500: could not properly parse response JSON: qkewjrnvqejrnbvjern")
 
 }
 
@@ -203,7 +190,7 @@ func TestPushCmdWithTlsEnabledServer(t *testing.T) {
 	os.MkdirAll(home.Repository(), 0777)
 	f.WriteFile(home.RepositoryFile(), 0644)
 
-	os.Setenv("HELM_HOME", home.String())
+	os.Setenv("HELM_REPOSITORY_CONFIG", home.String())
 	os.Setenv("HELM_REPO_USERNAME", "myuser")
 	os.Setenv("HELM_REPO_PASSWORD", "mypass")
 

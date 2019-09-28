@@ -13,7 +13,7 @@ var (
 func GetVersion() string {
 	v := fmt.Sprintf("Version: %s", Version)
 	if len(GitCommit) > 0 {
-		v = v + fmt.Sprintf("-%s", GitCommit)
+		v += fmt.Sprintf("-%s", GitCommit)
 	}
 	return v
 }

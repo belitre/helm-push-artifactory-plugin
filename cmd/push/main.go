@@ -14,8 +14,8 @@ import (
 
 	"github.com/belitre/helm-push-artifactory-plugin/pkg/artifactory"
 	"github.com/belitre/helm-push-artifactory-plugin/pkg/helm"
+	helmrepo "github.com/belitre/helm-push-artifactory-plugin/pkg/repo"
 	"github.com/belitre/helm-push-artifactory-plugin/pkg/version"
-	helmpush "github.com/chartmuseum/helm-push/pkg/helm"
 	"github.com/spf13/cobra"
 )
 
@@ -55,7 +55,7 @@ func getUsage() string {
 	return strings.Replace(globalUsage, "%version%", version.GetVersion(), 1)
 }
 
-func newPushCmd(args []string) *cobra.Command {
+func newPushCmd(args []string) (*cobra.Command, error) {
 	p := &pushCmd{}
 	cmd := &cobra.Command{
 		Use:          "helm push-artifactory",
@@ -87,7 +87,7 @@ func newPushCmd(args []string) *cobra.Command {
 	f.BoolVarP(&p.insecureSkipVerify, "insecure", "", false, "Connect to server with an insecure way by skipping certificate verification [$HELM_REPO_INSECURE]")
 	f.BoolVarP(&p.skipReindex, "skip-reindex", "", false, "Avoid trigger reindex in the repository after pushing the chart [$HELM_REPO_SKIP_REINDEX]")
 	f.Parse(args)
-	return cmd
+	return cmd, nil
 }
 
 func (p *pushCmd) setFieldsFromEnv() {
@@ -124,7 +124,7 @@ func (p *pushCmd) setFieldsFromEnv() {
 }
 
 func (p *pushCmd) push() error {
-	var repo *helmpush.Repo
+	var repo *helmrepo.Repo
 	var err error
 
 	// If the argument looks like a URL, just create a temp repo object
@@ -133,7 +133,7 @@ func (p *pushCmd) push() error {
 		// Check valid URL
 		_, err = url.ParseRequestURI(p.repository)
 	} else {
-		repo, err = helmpush.GetRepoByName(p.repository)
+		repo, err = helmrepo.GetRepoByName(p.repository)
 	}
 
 	if err != nil {
@@ -151,7 +151,10 @@ func (p *pushCmd) push() error {
 	}
 
 	if len(p.overrides) > 0 {
-		chart.OverrideValues(p.overrides)
+		err := chart.OverrideValues(p.overrides)
+		if err != nil {
+			return err
+		}
 	}
 
 	if repo != nil {
@@ -201,7 +204,7 @@ func (p *pushCmd) push() error {
 		return err
 	}
 
-	resp, err := client.UploadChartPackage(chart.GetMetadata().GetName(), chartPackagePath)
+	resp, err := client.UploadChartPackage(chart.Metadata.Name, chartPackagePath)
 	if err != nil {
 		return err
 	}
@@ -222,6 +225,7 @@ func (p *pushCmd) push() error {
 }
 
 func handleReindexResponse(resp *http.Response) error {
+	defer resp.Body.Close()
 	b, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
 		return err
@@ -235,6 +239,7 @@ func handleReindexResponse(resp *http.Response) error {
 }
 
 func handlePushResponse(resp *http.Response) error {
+	defer resp.Body.Close()
 	if resp.StatusCode != 201 {
 		b, err := ioutil.ReadAll(resp.Body)
 		if err != nil {
@@ -266,8 +271,12 @@ func getArtifactoryError(b []byte, code int) error {
 }
 
 func main() {
-	cmd := newPushCmd(os.Args[1:])
+	cmd, err := newPushCmd(os.Args[1:])
+	if err != nil {
+		fmt.Println(fmt.Sprintf("%v", err))
+	}
 	if err := cmd.Execute(); err != nil {
+		fmt.Println(fmt.Sprintf("%v", err))
 		os.Exit(1)
 	}
 }

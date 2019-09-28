@@ -3,11 +3,10 @@ package helm
 import (
 	"fmt"
 
-	yaml "gopkg.in/yaml.v2"
-	"k8s.io/helm/pkg/chartutil"
-	"k8s.io/helm/pkg/proto/hapi/chart"
-	cpb "k8s.io/helm/pkg/proto/hapi/chart"
-	"k8s.io/helm/pkg/strvals"
+	"helm.sh/helm/pkg/chart"
+	"helm.sh/helm/pkg/chart/loader"
+	"helm.sh/helm/pkg/chartutil"
+	"helm.sh/helm/pkg/strvals"
 )
 
 type (
@@ -25,7 +24,11 @@ func (c *Chart) SetVersion(version string) {
 // GetChartByName returns a chart by "name", which can be
 // either a directory or .tgz package
 func GetChartByName(name string) (*Chart, error) {
-	cc, err := chartutil.Load(name)
+	chartLoader, err := loader.Loader(name)
+	if err != nil {
+		return nil, err
+	}
+	cc, err := chartLoader.Load()
 	if err != nil {
 		return nil, err
 	}
@@ -47,21 +50,11 @@ func (c *Chart) OverrideValues(overrides []string) error {
 		}
 	}
 
-	ovAsBytes, err := yaml.Marshal(ovMap)
-	if err != nil {
-		return fmt.Errorf("Error while marshal values: %s", err)
-	}
-
-	cvals, err := chartutil.CoalesceValues(c.Chart, &cpb.Config{Raw: string(ovAsBytes)})
+	cvals, err := chartutil.CoalesceValues(c.Chart, ovMap)
 	if err != nil {
 		return fmt.Errorf("Error while overriding chart values: %s", err)
 	}
 
-	cvalsAsYaml, err := cvals.YAML()
-	if err != nil {
-		return fmt.Errorf("Error parsing values to yaml: %s", err)
-	}
-
-	c.Values = &cpb.Config{Raw: cvalsAsYaml}
+	c.Values = cvals
 	return nil
 }
