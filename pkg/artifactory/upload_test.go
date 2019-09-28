@@ -1,16 +1,11 @@
 package artifactory
 
 import (
-	"crypto/rand"
-	"crypto/tls"
 	"encoding/base64"
 	"fmt"
 	"net/http"
 	"net/http/httptest"
-	"strings"
 	"testing"
-
-	"k8s.io/helm/pkg/tlsutil"
 )
 
 var (
@@ -127,6 +122,7 @@ func TestUploadChartPackage(t *testing.T) {
 	}
 }
 
+/*
 func TestUploadChartPackageWithTlsServer(t *testing.T) {
 	chartName := "mychart"
 	basicAuthHeader := "Basic " + base64.StdEncoding.EncodeToString([]byte("user:pass"))
@@ -262,6 +258,7 @@ func TestUploadChartPackageWithVerifyingClientCert(t *testing.T) {
 		t.Fatalf("[upload with cert and key files] expect status code 201 but got %d", resp.StatusCode)
 	}
 }
+*/
 
 func TestReindexArtifactoryRepo(t *testing.T) {
 	basicAuthApiKey := "Basic " + base64.StdEncoding.EncodeToString([]byte("user:apiKey"))
