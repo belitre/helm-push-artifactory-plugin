@@ -42,5 +42,4 @@ fi
 fi
 
 tar xzf "releases/v${version}.tar.gz" -C "releases/v${version}"
-cp -rf "releases/v${version}/helm-push-artifactory-plugin/" "./"
-
+cp -rf releases/v${version}/helm-push-artifactory-plugin/* ./
