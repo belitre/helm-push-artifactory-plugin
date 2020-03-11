@@ -10,9 +10,9 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
-	"helm.sh/helm/pkg/cli"
-	"helm.sh/helm/pkg/getter"
-	"helm.sh/helm/pkg/repo"
+	"helm.sh/helm/v3/pkg/cli"
+	"helm.sh/helm/v3/pkg/getter"
+	"helm.sh/helm/v3/pkg/repo"
 )
 
 var (

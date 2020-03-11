@@ -48,7 +48,7 @@ func (c *client) UploadChartPackage(chartName, chartPackagePath string) (*http.R
 		return nil, err
 	}
 
-	u.Path = path.Join(u.Path, c.opts.path, chartName, path.Base(chartPackagePath))
+	u.Path = path.Join(u.Path, c.opts.path, chartName, filepath.Base(chartPackagePath))
 	req, err := buildRequest(u.String(), f)
 	if err != nil {
 		return nil, err

@@ -3,10 +3,10 @@ package helm
 import (
 	"fmt"
 
-	"helm.sh/helm/pkg/chart"
-	"helm.sh/helm/pkg/chart/loader"
-	"helm.sh/helm/pkg/chartutil"
-	"helm.sh/helm/pkg/strvals"
+	"helm.sh/helm/v3/pkg/chart"
+	"helm.sh/helm/v3/pkg/chart/loader"
+	"helm.sh/helm/v3/pkg/chartutil"
+	"helm.sh/helm/v3/pkg/strvals"
 )
 
 type (
