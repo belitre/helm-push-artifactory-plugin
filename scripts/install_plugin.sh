@@ -12,7 +12,7 @@ supported_helm_version="v2"
 helm_version="$(helm version | grep "Version" | cut -d '"' -f 2 | cut -d '.' -f 1)"
 
 if [ "$helm_version" != "$supported_helm_version" ]; then
-    echo "Error, this version of helm-push-artifactory-plugin is only for Helm v3"
+    echo "Error, this version of helm-push-artifactory-plugin is only for Helm $supported_helm_version"
     echo "Please use --version v1.0.1 or higher to install the plugin"
     exit 1
 fi

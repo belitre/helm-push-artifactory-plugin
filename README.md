@@ -8,7 +8,7 @@ A Helm plugin to push helm charts to artifactory:
 
 ## Install
 
-__IMPORTANT: by default `helm plugin install` will install the version from the master branch, and that version is for helm 2, if you are using Helm 3 please add `--version 1.0.1` (or the version you want to use) to your `helm plugin install` command. Also please always use the flag `--version` in your CI/CD system to avoid surprises when new changes are merged to master!__
+__IMPORTANT: by default `helm plugin install` will install the version from the master branch, and that version is for Helm v2, if you are using Helm v3 please add `--version 1.0.1` (or the version you want to use) to your `helm plugin install` command. Also please always use the flag `--version` in your CI/CD system to avoid surprises when new changes are merged to master!__
 
 Based on the version in `plugin.yaml`, release binary will be downloaded from GitHub:
 
