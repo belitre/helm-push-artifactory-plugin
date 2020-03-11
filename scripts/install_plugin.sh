@@ -7,6 +7,18 @@ if [ -n "${HELM_PUSH_PLUGIN_NO_INSTALL_HOOK}" ]; then
     exit 0
 fi
 
+supported_helm_version="v3"
+
+helm_version="$(helm version | grep "Version" | cut -d '"' -f 2 | cut -d '.' -f 1)"
+
+if [ "$helm_version" != "$supported_helm_version" ]; then
+    echo "Error, this version of helm-push-artifactory-plugin is only for Helm $supported_helm_version"
+    echo "Please check https://github.com/belitre/helm-push-artifactory-plugin to find the correct version"
+    exit 1
+fi
+
+echo "Installing plugin for Helm $supported_helm_version..."
+
 version="$(cat plugin.yaml | grep "version" | cut -d '"' -f 2)"
 echo "Downloading and installing helm-push-artifactory v${version} ..."
 

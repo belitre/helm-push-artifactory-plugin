@@ -1,6 +1,6 @@
 # Helm push artifactory plugin
 
-__WARNING: THIS VERSION IS FOR HELM 3, FOR HELM 2 PLEASE USE VERSION [v0.4.0](https://github.com/belitre/helm-push-artifactory-plugin/releases/tag/v0.4.0)__
+__WARNING: THIS VERSION IS FOR HELM 3, FOR HELM 2 PLEASE USE VERSION [v0.4.1](https://github.com/belitre/helm-push-artifactory-plugin/releases/tag/v0.4.1)__
 
 A Helm plugin to push helm charts to artifactory:
  
@@ -10,16 +10,18 @@ A Helm plugin to push helm charts to artifactory:
 
 ## Install
 
+__IMPORTANT: by default `helm plugin install` will install the version from the master branch, and that version is for Helm v2, if you are using Helm v3 please add `--version 1.0.1` (or the version you want to use) to your `helm plugin install` command. Also please always use the flag `--version` in your CI/CD system to avoid surprises when new changes are merged to master!__
+
 To install the version for Helm 3 you need to specify the version when installing using helm cli:
 
 ```
-$ helm plugin install https://github.com/belitre/helm-push-artifactory-plugin --version v1.0.0
-Downloading and installing helm-push-artifactory v1.0.0 ...
-https://github.com/belitre/helm-push-artifactory-plugin/releases/download/v1.0.0/helm-push-artifactory_v1.0.0_darwin_amd64.tar.gz
+$ helm plugin install https://github.com/belitre/helm-push-artifactory-plugin --version v1.0.1
+Downloading and installing helm-push-artifactory v1.0.1 ...
+https://github.com/belitre/helm-push-artifactory-plugin/releases/download/v1.0.1/helm-push-artifactory_v1.0.1_darwin_amd64.tar.gz
 Installed plugin: push-artifactory
 ```
 
-You can also download on one of the compressed files from [here](https://github.com/belitre/helm-push-artifactory-plugin/releases/tag/v1.0.0) and just extract it in your `$HELM_HOME/plugins/`
+You can also download on one of the compressed files from [here](https://github.com/belitre/helm-push-artifactory-plugin/releases/tag/v1.0.1) and just extract it in your `$HELM_HOME/plugins/`
 
 __Important for windows users: I really don't know how to make the `helm plugin install` command work on Windows :D so please just download the zip and extract it on your `$HELM_HOME/plugins/ folder :)__
 

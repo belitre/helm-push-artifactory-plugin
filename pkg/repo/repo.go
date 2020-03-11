@@ -20,8 +20,8 @@ import (
 	"fmt"
 	"os"
 
-	"helm.sh/helm/pkg/helmpath"
-	"helm.sh/helm/pkg/repo"
+	"helm.sh/helm/v3/pkg/helmpath"
+	"helm.sh/helm/v3/pkg/repo"
 )
 
 type (
