@@ -9,7 +9,7 @@ fi
 
 supported_helm_version="v2"
 
-helm_version="$(helm version | grep "Version" | cut -d '"' -f 2 | cut -d '.' -f 1)"
+helm_version="$(helm version --client| grep "Version" | cut -d '"' -f 2 | cut -d '.' -f 1)"
 
 if [ "$helm_version" != "$supported_helm_version" ]; then
     echo "Error, this version of helm-push-artifactory-plugin is only for Helm $supported_helm_version"
