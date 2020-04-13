@@ -1,5 +1,5 @@
 name: "push-artifactory"
-version: "0.4.1"
+version: "0.4.2"
 usage: "Please see https://github.com/belitre/helm-push-artifactory-plugin for usage"
 description: "Push helm charts to artifactory"
 ignoreFlags: false
