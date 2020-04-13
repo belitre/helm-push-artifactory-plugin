@@ -14,8 +14,8 @@ Based on the version in `plugin.yaml`, release binary will be downloaded from Gi
 
 ```
 $ helm plugin install https://github.com/belitre/helm-push-artifactory-plugin
-Downloading and installing helm-push-artifactory v0.4.1 ...
-https://github.com/belitre/helm-push-artifactory-plugin/releases/download/v0.4.1/helm-push-artifactory_v0.4.1_darwin_amd64.tar.gz
+Downloading and installing helm-push-artifactory v0.4.2 ...
+https://github.com/belitre/helm-push-artifactory-plugin/releases/download/v0.4.2/helm-push-artifactory_v0.4.2_darwin_amd64.tar.gz
 Installed plugin: push-artifactory
 ```
 
