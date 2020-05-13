@@ -10,7 +10,7 @@ require (
 	github.com/jfrog/jfrog-client-go v0.8.1
 	github.com/spf13/cobra v0.0.6
 	github.com/stretchr/testify v1.5.1
-	gopkg.in/yaml.v2 v2.2.8
+	gopkg.in/yaml.v2 v2.3.0
 	k8s.io/apimachinery v0.17.3 // indirect
 	k8s.io/client-go v11.0.0+incompatible // indirect
 	k8s.io/helm v2.16.3+incompatible
