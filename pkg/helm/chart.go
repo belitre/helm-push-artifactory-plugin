@@ -2,11 +2,14 @@ package helm
 
 import (
 	"fmt"
+	"io/ioutil"
+	"path/filepath"
 
 	"helm.sh/helm/v3/pkg/chart"
 	"helm.sh/helm/v3/pkg/chart/loader"
 	"helm.sh/helm/v3/pkg/chartutil"
 	"helm.sh/helm/v3/pkg/strvals"
+	"sigs.k8s.io/yaml"
 )
 
 type (
@@ -37,7 +40,25 @@ func GetChartByName(name string) (*Chart, error) {
 
 // CreateChartPackage creates a new .tgz package in directory
 func CreateChartPackage(c *Chart, outDir string) (string, error) {
-	return chartutil.Save(c.Chart, outDir)
+	err := chartutil.SaveDir(c.Chart, outDir)
+	if err != nil {
+		return "", fmt.Errorf("Error while saving chart: %s", err)
+	}
+	const ValuesfileName = "values.yaml"
+	vf := filepath.Join(outDir, c.Name(), ValuesfileName)
+	valuesMap, err := yaml.Marshal(c.Values)
+	if err != nil {
+		return "", fmt.Errorf("Couldn't read values file as YAML: %s", err)
+	}
+	err = ioutil.WriteFile(vf, valuesMap, 0644)
+	if err != nil {
+		return "", fmt.Errorf("Couldn't wring values file: %s", err)
+	}
+	chart, err := loader.LoadDir(filepath.Join(outDir, c.Name()))
+	if err != nil {
+		return "", fmt.Errorf("New chart with the values seems to be invalid (unable to load): %s", err)
+	}
+	return chartutil.Save(chart, outDir)
 }
 
 // OverrideValues overrides values in chart values.yaml file
