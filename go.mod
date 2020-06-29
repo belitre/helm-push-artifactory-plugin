@@ -9,4 +9,5 @@ require (
 	github.com/stretchr/testify v1.5.1
 	helm.sh/helm/v3 v3.1.1
 	k8s.io/apimachinery v0.17.3 // indirect
+	sigs.k8s.io/yaml v1.1.0
 )
