@@ -13,5 +13,5 @@ require (
 	gopkg.in/yaml.v2 v2.2.8
 	k8s.io/apimachinery v0.17.3 // indirect
 	k8s.io/client-go v11.0.0+incompatible // indirect
-	k8s.io/helm v2.16.3+incompatible
+	k8s.io/helm v2.16.11+incompatible
 )
