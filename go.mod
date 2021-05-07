@@ -1,6 +1,6 @@
 module github.com/belitre/helm-push-artifactory-plugin
 
-go 1.14
+go 1.15
 
 require (
 	github.com/jfrog/jfrog-client-go v0.8.1
