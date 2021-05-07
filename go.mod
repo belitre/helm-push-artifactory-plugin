@@ -1,6 +1,6 @@
 module github.com/belitre/helm-push-artifactory-plugin
 
-go 1.14
+go 1.15
 
 require (
 	github.com/Masterminds/semver v1.5.0 // indirect
