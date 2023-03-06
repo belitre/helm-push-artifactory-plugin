@@ -163,21 +163,21 @@ func (p *pushCmd) push() error {
 	}
 
 	if repo != nil {
-		p.repository = repo.URL
+		p.repository = repo.Config.URL
 		if p.username == "" {
-			p.username = repo.Username
+			p.username = repo.Config.Username
 		}
 		if p.password == "" {
-			p.password = repo.Password
+			p.password = repo.Config.Password
 		}
 		if p.caFile == "" {
-			p.caFile = repo.CAFile
+			p.caFile = repo.Config.CAFile
 		}
 		if p.certFile == "" {
-			p.certFile = repo.CertFile
+			p.certFile = repo.Config.CertFile
 		}
 		if p.keyFile == "" {
-			p.keyFile = repo.KeyFile
+			p.keyFile = repo.Config.KeyFile
 		}
 	}
 
@@ -209,7 +209,7 @@ func (p *pushCmd) push() error {
 		return err
 	}
 
-	resp, err := client.UploadChartPackage(chart.GetMetadata().GetName(), chartPackagePath)
+	resp, err := client.UploadChartPackage(chart.Metadata.Name, chartPackagePath)
 	if err != nil {
 		return err
 	}
