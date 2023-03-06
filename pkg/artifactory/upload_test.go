@@ -8,14 +8,14 @@ import (
 	"testing"
 )
 
-var (
-	testTarballPath    = "../../testdata/charts/mychart/mychart-0.1.0.tgz"
-	testCertPath       = "../../testdata/tls/test_cert.crt"
-	testKeyPath        = "../../testdata/tls/test_key.key"
-	testCAPath         = "../../testdata/tls/ca.crt"
-	testServerCAPath   = "../../testdata/tls/server_ca.crt"
-	testServerCertPath = "../../testdata/tls/test_server.crt"
-	testServerKeyPath  = "../../testdata/tls/test_server.key"
+const (
+	testTarballPath    string = "../../testdata/charts/mychart/mychart-0.1.0.tgz"
+	testCertPath       string = "../../testdata/tls/test_cert.crt"
+	testKeyPath        string = "../../testdata/tls/test_key.key"
+	testCAPath         string = "../../testdata/tls/ca.crt"
+	testServerCAPath   string = "../../testdata/tls/server_ca.crt"
+	testServerCertPath string = "../../testdata/tls/test_server.crt"
+	testServerKeyPath  string = "../../testdata/tls/test_server.key"
 )
 
 func TestUploadChartPackage(t *testing.T) {
@@ -55,7 +55,7 @@ func TestUploadChartPackage(t *testing.T) {
 	}
 
 	// Bad package path
-	resp, err = cmClient.UploadChartPackage(chartName, "/non/existant/path/mychart-0.1.0.tgz")
+	_, err = cmClient.UploadChartPackage(chartName, "/non/existant/path/mychart-0.1.0.tgz")
 	if err == nil {
 		t.Error("expecting error with bad package path, instead got nil")
 	}

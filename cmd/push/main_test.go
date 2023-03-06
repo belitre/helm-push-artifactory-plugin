@@ -1,7 +1,6 @@
 package main
 
 import (
-	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
 	"os"
@@ -15,15 +14,16 @@ import (
 	"k8s.io/helm/pkg/repo"
 )
 
-var (
-	settings           helm_env.EnvSettings
-	testTarballPath    = "../../testdata/charts/mychart/mychart-0.1.0.tgz"
-	testCertPath       = "../../testdata/tls/test_cert.crt"
-	testKeyPath        = "../../testdata/tls/test_key.key"
-	testCAPath         = "../../testdata/tls/ca.crt"
-	testServerCAPath   = "../../testdata/tls/server_ca.crt"
-	testServerCertPath = "../../testdata/tls/test_server.crt"
-	testServerKeyPath  = "../../testdata/tls/test_server.key"
+var settings helm_env.EnvSettings
+
+const (
+	testTarballPath    string = "../../testdata/charts/mychart/mychart-0.1.0.tgz"
+	testCertPath       string = "../../testdata/tls/test_cert.crt"
+	testKeyPath        string = "../../testdata/tls/test_key.key"
+	testCAPath         string = "../../testdata/tls/ca.crt"
+	testServerCAPath   string = "../../testdata/tls/server_ca.crt"
+	testServerCertPath string = "../../testdata/tls/test_server.crt"
+	testServerKeyPath  string = "../../testdata/tls/test_server.key"
 )
 
 func TestPushCmd(t *testing.T) {
@@ -44,7 +44,7 @@ func TestPushCmd(t *testing.T) {
 	defer ts.Close()
 
 	// Create new Helm home w/ test repo
-	tmp, err := ioutil.TempDir("", "helm-push-test")
+	tmp, err := os.MkdirTemp("", "helm-push-test")
 	if err != nil {
 		t.Error("unexpected error creating temp test dir", err)
 	}

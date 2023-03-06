@@ -5,7 +5,6 @@ import (
 
 	yaml "gopkg.in/yaml.v2"
 	"k8s.io/helm/pkg/chartutil"
-	"k8s.io/helm/pkg/proto/hapi/chart"
 	cpb "k8s.io/helm/pkg/proto/hapi/chart"
 	"k8s.io/helm/pkg/strvals"
 )
@@ -13,7 +12,7 @@ import (
 type (
 	// Chart is a helm package that contains metadata
 	Chart struct {
-		*chart.Chart
+		*cpb.Chart
 	}
 )
 
@@ -54,17 +53,17 @@ func (c *Chart) OverrideValues(overrides []string) error {
 
 	ovAsBytes, err := yaml.Marshal(ovMap)
 	if err != nil {
-		return fmt.Errorf("Error while marshal values: %s", err)
+		return fmt.Errorf("error while marshal values: %s", err)
 	}
 
 	cvals, err := chartutil.CoalesceValues(c.Chart, &cpb.Config{Raw: string(ovAsBytes)})
 	if err != nil {
-		return fmt.Errorf("Error while overriding chart values: %s", err)
+		return fmt.Errorf("error while overriding chart values: %s", err)
 	}
 
 	cvalsAsYaml, err := cvals.YAML()
 	if err != nil {
-		return fmt.Errorf("Error parsing values to yaml: %s", err)
+		return fmt.Errorf("error parsing values to yaml: %s", err)
 	}
 
 	c.Values = &cpb.Config{Raw: cvalsAsYaml}

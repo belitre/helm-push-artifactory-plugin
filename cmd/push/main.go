@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"net/url"
 	"os"
@@ -67,7 +67,7 @@ func newPushCmd(args []string) *cobra.Command {
 		RunE: func(cmd *cobra.Command, args []string) error {
 
 			if len(args) != 2 {
-				return errors.New("This command needs 2 arguments: name of chart, repository URL")
+				return errors.New("this command needs 2 arguments: name of chart, repository URL")
 			}
 			p.chartName = args[0]
 			p.repository = args[1]
@@ -198,7 +198,7 @@ func (p *pushCmd) push() error {
 		return err
 	}
 
-	tmp, err := ioutil.TempDir("", "helm-push-artifactory-")
+	tmp, err := os.MkdirTemp("", "helm-push-artifactory-")
 	if err != nil {
 		return err
 	}
@@ -230,7 +230,7 @@ func (p *pushCmd) push() error {
 }
 
 func handleReindexResponse(resp *http.Response) error {
-	b, err := ioutil.ReadAll(resp.Body)
+	b, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return err
 	}
@@ -244,7 +244,7 @@ func handleReindexResponse(resp *http.Response) error {
 
 func handlePushResponse(resp *http.Response) error {
 	if resp.StatusCode != 201 {
-		b, err := ioutil.ReadAll(resp.Body)
+		b, err := io.ReadAll(resp.Body)
 		if err != nil {
 			return err
 		}
