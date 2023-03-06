@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"net/url"
 	"os"
@@ -21,20 +21,21 @@ import (
 
 type (
 	pushCmd struct {
-		chartName          string
-		chartVersion       string
-		repository         string
-		path               string
-		username           string
-		password           string
 		accessToken        string
 		apiKey             string
 		caFile             string
 		certFile           string
-		keyFile            string
+		chartAppVersion    string
+		chartName          string
+		chartVersion       string
 		insecureSkipVerify bool
-		skipReindex        bool
+		keyFile            string
 		overrides          []string
+		password           string
+		path               string
+		repository         string
+		skipReindex        bool
+		username           string
 	}
 )
 
@@ -44,10 +45,11 @@ var (
 
 Examples:
 
-  $ helm push-artifactory mychart-0.1.0.tgz https://artifactory/repo       # push mychart-0.1.0.tgz from "helm package"
-  $ helm push-artifactory . https://artifactory/repo                       # package and push chart directory
-  $ helm push-artifactory . --version="7c4d121" https://artifactory/repo   # override version in Chart.yaml
-  $ helm push-artifactory mychart-0.1.0.tgz my-helm-repo                   # push mychart-0.1.0.tgz to a "my-helm-repo" repository
+  $ helm push-artifactory mychart-0.1.0.tgz https://artifactory/repo       		# push mychart-0.1.0.tgz from "helm package"
+  $ helm push-artifactory . https://artifactory/repo                       		# package and push chart directory
+  $ helm push-artifactory . --version="7c4d121" https://artifactory/repo   		# override version in Chart.yaml
+  $ helm push-artifactory . --app-version="7c4d121" https://artifactory/repo   	# override appVersion in Chart.yaml
+  $ helm push-artifactory mychart-0.1.0.tgz my-helm-repo                   		# push mychart-0.1.0.tgz to a "my-helm-repo" repository
 `
 )
 
@@ -65,7 +67,7 @@ func newPushCmd(args []string) *cobra.Command {
 		RunE: func(cmd *cobra.Command, args []string) error {
 
 			if len(args) != 2 {
-				return errors.New("This command needs 2 arguments: name of chart, repository URL")
+				return errors.New("this command needs 2 arguments: name of chart, repository URL")
 			}
 			p.chartName = args[0]
 			p.repository = args[1]
@@ -75,6 +77,7 @@ func newPushCmd(args []string) *cobra.Command {
 	}
 	f := cmd.Flags()
 	f.StringVarP(&p.chartVersion, "version", "v", "", "Override chart version pre-push")
+	f.StringVarP(&p.chartAppVersion, "app-version", "", "", "Override chart appVersion pre-push")
 	f.StringArrayVarP(&p.overrides, "set", "s", []string{}, "<key>=<value> pairs, overrides values in chart values.yaml (example: -s image.tag=\"0.5.2\")")
 	f.StringVarP(&p.path, "path", "", "", "Path to save the chart in the local repository (https://artifactory/repo/path/chart.version.tgz) [$HELM_REPO_PATH]")
 	f.StringVarP(&p.username, "username", "u", "", "Override HTTP basic auth username [$HELM_REPO_USERNAME]")
@@ -150,26 +153,31 @@ func (p *pushCmd) push() error {
 		chart.SetVersion(p.chartVersion)
 	}
 
+	// appVersion override
+	if p.chartAppVersion != "" {
+		chart.SetAppVersion(p.chartAppVersion)
+	}
+
 	if len(p.overrides) > 0 {
 		chart.OverrideValues(p.overrides)
 	}
 
 	if repo != nil {
-		p.repository = repo.URL
+		p.repository = repo.Config.URL
 		if p.username == "" {
-			p.username = repo.Username
+			p.username = repo.Config.Username
 		}
 		if p.password == "" {
-			p.password = repo.Password
+			p.password = repo.Config.Password
 		}
 		if p.caFile == "" {
-			p.caFile = repo.CAFile
+			p.caFile = repo.Config.CAFile
 		}
 		if p.certFile == "" {
-			p.certFile = repo.CertFile
+			p.certFile = repo.Config.CertFile
 		}
 		if p.keyFile == "" {
-			p.keyFile = repo.KeyFile
+			p.keyFile = repo.Config.KeyFile
 		}
 	}
 
@@ -190,7 +198,7 @@ func (p *pushCmd) push() error {
 		return err
 	}
 
-	tmp, err := ioutil.TempDir("", "helm-push-artifactory-")
+	tmp, err := os.MkdirTemp("", "helm-push-artifactory-")
 	if err != nil {
 		return err
 	}
@@ -201,7 +209,7 @@ func (p *pushCmd) push() error {
 		return err
 	}
 
-	resp, err := client.UploadChartPackage(chart.GetMetadata().GetName(), chartPackagePath)
+	resp, err := client.UploadChartPackage(chart.Metadata.Name, chartPackagePath)
 	if err != nil {
 		return err
 	}
@@ -222,7 +230,7 @@ func (p *pushCmd) push() error {
 }
 
 func handleReindexResponse(resp *http.Response) error {
-	b, err := ioutil.ReadAll(resp.Body)
+	b, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return err
 	}
@@ -236,7 +244,7 @@ func handleReindexResponse(resp *http.Response) error {
 
 func handlePushResponse(resp *http.Response) error {
 	if resp.StatusCode != 201 {
-		b, err := ioutil.ReadAll(resp.Body)
+		b, err := io.ReadAll(resp.Body)
 		if err != nil {
 			return err
 		}

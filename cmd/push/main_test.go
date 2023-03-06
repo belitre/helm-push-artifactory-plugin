@@ -1,7 +1,6 @@
 package main
 
 import (
-	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
 	"os"
@@ -9,21 +8,22 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
-	"k8s.io/helm/pkg/getter"
-	helm_env "k8s.io/helm/pkg/helm/environment"
+	"helm.sh/helm/v3/pkg/cli"
+	"helm.sh/helm/v3/pkg/getter"
+	"helm.sh/helm/v3/pkg/repo"
 	"k8s.io/helm/pkg/helm/helmpath"
-	"k8s.io/helm/pkg/repo"
 )
 
-var (
-	settings           helm_env.EnvSettings
-	testTarballPath    = "../../testdata/charts/mychart/mychart-0.1.0.tgz"
-	testCertPath       = "../../testdata/tls/test_cert.crt"
-	testKeyPath        = "../../testdata/tls/test_key.key"
-	testCAPath         = "../../testdata/tls/ca.crt"
-	testServerCAPath   = "../../testdata/tls/server_ca.crt"
-	testServerCertPath = "../../testdata/tls/test_server.crt"
-	testServerKeyPath  = "../../testdata/tls/test_server.key"
+var settings cli.EnvSettings
+
+const (
+	testTarballPath    string = "../../testdata/charts/mychart/mychart-0.1.0.tgz"
+	testCertPath       string = "../../testdata/tls/test_cert.crt"
+	testKeyPath        string = "../../testdata/tls/test_key.key"
+	testCAPath         string = "../../testdata/tls/ca.crt"
+	testServerCAPath   string = "../../testdata/tls/server_ca.crt"
+	testServerCertPath string = "../../testdata/tls/test_server.crt"
+	testServerKeyPath  string = "../../testdata/tls/test_server.key"
 )
 
 func TestPushCmd(t *testing.T) {
@@ -44,20 +44,20 @@ func TestPushCmd(t *testing.T) {
 	defer ts.Close()
 
 	// Create new Helm home w/ test repo
-	tmp, err := ioutil.TempDir("", "helm-push-test")
+	tmp, err := os.MkdirTemp("", "helm-push-test")
 	if err != nil {
 		t.Error("unexpected error creating temp test dir", err)
 	}
 	defer os.RemoveAll(tmp)
 
 	home := helmpath.Home(tmp)
-	f := repo.NewRepoFile()
+	f := repo.NewFile()
 
 	entry := repo.Entry{}
 	entry.Name = "helm-push-test"
 	entry.URL = ts.URL
 
-	_, err = repo.NewChartRepository(&entry, getter.All(settings))
+	_, err = repo.NewChartRepository(&entry, getter.All(&settings))
 	if err != nil {
 		t.Error("unexpected error created test repository", err)
 	}
@@ -66,7 +66,8 @@ func TestPushCmd(t *testing.T) {
 	os.MkdirAll(home.Repository(), 0777)
 	f.WriteFile(home.RepositoryFile(), 0644)
 
-	os.Setenv("HELM_HOME", home.String())
+	os.Setenv("HELM_REPOSITORY_CONFIG", home.RepositoryFile()) // for helm3
+	os.Setenv("HELM_HOME", home.String())                      // for helm2
 	os.Setenv("HELM_REPO_USERNAME", "myuser")
 	os.Setenv("HELM_REPO_PASSWORD", "mypass")
 
