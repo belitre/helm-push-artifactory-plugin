@@ -5,7 +5,7 @@ go 1.14
 require (
 	github.com/Masterminds/semver v1.5.0 // indirect
 	github.com/chartmuseum/helm-push v0.7.1
-	github.com/cyphar/filepath-securejoin v0.2.2 // indirect
+	github.com/cyphar/filepath-securejoin v0.2.4 // indirect
 	github.com/gobwas/glob v0.2.3 // indirect
 	github.com/jfrog/jfrog-client-go v0.8.1
 	github.com/spf13/cobra v0.0.6
