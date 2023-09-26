@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"net/url"
 	"os"
@@ -65,7 +65,7 @@ func newPushCmd(args []string) *cobra.Command {
 		RunE: func(cmd *cobra.Command, args []string) error {
 
 			if len(args) != 2 {
-				return errors.New("This command needs 2 arguments: name of chart, repository URL")
+				return errors.New("this command needs 2 arguments: name of chart, repository URL")
 			}
 			p.chartName = args[0]
 			p.repository = args[1]
@@ -155,21 +155,21 @@ func (p *pushCmd) push() error {
 	}
 
 	if repo != nil {
-		p.repository = repo.URL
+		p.repository = repo.Config.URL
 		if p.username == "" {
-			p.username = repo.Username
+			p.username = repo.Config.Username
 		}
 		if p.password == "" {
-			p.password = repo.Password
+			p.password = repo.Config.Password
 		}
 		if p.caFile == "" {
-			p.caFile = repo.CAFile
+			p.caFile = repo.Config.CAFile
 		}
 		if p.certFile == "" {
-			p.certFile = repo.CertFile
+			p.certFile = repo.Config.CertFile
 		}
 		if p.keyFile == "" {
-			p.keyFile = repo.KeyFile
+			p.keyFile = repo.Config.KeyFile
 		}
 	}
 
@@ -190,7 +190,7 @@ func (p *pushCmd) push() error {
 		return err
 	}
 
-	tmp, err := ioutil.TempDir("", "helm-push-artifactory-")
+	tmp, err := os.MkdirTemp("", "helm-push-artifactory-")
 	if err != nil {
 		return err
 	}
@@ -222,7 +222,7 @@ func (p *pushCmd) push() error {
 }
 
 func handleReindexResponse(resp *http.Response) error {
-	b, err := ioutil.ReadAll(resp.Body)
+	b, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return err
 	}
@@ -236,7 +236,7 @@ func handleReindexResponse(resp *http.Response) error {
 
 func handlePushResponse(resp *http.Response) error {
 	if resp.StatusCode != 201 {
-		b, err := ioutil.ReadAll(resp.Body)
+		b, err := io.ReadAll(resp.Body)
 		if err != nil {
 			return err
 		}

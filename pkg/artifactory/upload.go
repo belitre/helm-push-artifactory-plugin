@@ -86,7 +86,7 @@ func buildRequest(url string, f *os.File) (*http.Request, error) {
 		return nil, err
 	}
 
-	details, err := fileutils.GetFileDetails(f.Name())
+	details, err := fileutils.GetFileDetails(f.Name(), true)
 	if err != nil {
 		return nil, err
 	}

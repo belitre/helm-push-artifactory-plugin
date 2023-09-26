@@ -52,7 +52,7 @@ func NewClient(opts ...Option) (Client, error) {
 	return &c, nil
 }
 
-//Create transport with TLS config
+// Create transport with TLS config
 func newTransport(certFile, keyFile, caFile string, insecureSkipVerify bool) (*http.Transport, error) {
 	transport := &http.Transport{}
 
