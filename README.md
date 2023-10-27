@@ -1,3 +1,9 @@
+# This project is no longer supported
+
+It's been a long time since I don't have time to work on this project and I don't even work with artifactory anymore.
+
+Feel free to fork the repository and continue with the development :)
+
 # Helm push artifactory plugin
 
 A Helm plugin to push helm charts to artifactory:
