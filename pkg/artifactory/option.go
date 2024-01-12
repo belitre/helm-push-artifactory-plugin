@@ -73,28 +73,28 @@ func Timeout(timeout int64) Option {
 	}
 }
 
-//CAFile specifies the path of CA bundle
+// CAFile specifies the path of CA bundle
 func CAFile(caFile string) Option {
 	return func(opts *options) {
 		opts.caFile = caFile
 	}
 }
 
-//CertFile specifies the path of SSL certificate file
+// CertFile specifies the path of SSL certificate file
 func CertFile(certFile string) Option {
 	return func(opts *options) {
 		opts.certFile = certFile
 	}
 }
 
-//KeyFile specifies the path of SSL key file
+// KeyFile specifies the path of SSL key file
 func KeyFile(keyFile string) Option {
 	return func(opts *options) {
 		opts.keyFile = keyFile
 	}
 }
 
-//InsecureSkipVerify to indicate if verify the certificate when connecting
+// InsecureSkipVerify to indicate if verify the certificate when connecting
 func InsecureSkipVerify(insecureSkipVerify bool) Option {
 	return func(opts *options) {
 		opts.insecureSkipVerify = insecureSkipVerify
